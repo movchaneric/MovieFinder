@@ -6,6 +6,7 @@ const Star = ({
   color,
   size,
 }) => {
+  // Star styling
   const starStyle = {
     width: `${size}px`,
     height: `${size}px`,

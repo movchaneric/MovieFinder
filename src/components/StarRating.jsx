@@ -17,7 +17,7 @@ const StarRating = ({
   size = 48,
   className = "",
   defaultValue = 0,
-  onSetRating
+  onSetRating,
 }) => {
   const textStyle = {
     lineHeight: "1",
@@ -29,11 +29,12 @@ const StarRating = ({
   const [rating, setRating] = useState(
     defaultValue <= maxRating ? defaultValue : maxRating
   );
+
   const [tempRating, setTempRating] = useState(0);
 
-  const handleRating = (ratingVal) => {
-    setRating(ratingVal);
-    onSetRating(ratingVal)
+  const handleRating = (rating) => {
+    setRating(rating);
+    onSetRating(rating);
   };
 
   return (
@@ -57,7 +58,5 @@ const StarRating = ({
     </>
   );
 };
-
-
 
 export default StarRating;

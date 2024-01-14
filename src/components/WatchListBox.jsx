@@ -1,13 +1,13 @@
 import { useState } from "react";
 import WatchedSummery from "./ WatchedSummery";
-import WatchedMovies from "./WatchedMovie";
+import WatchedMoviesList from "./WatchedMovieList";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 const WatchListBox = ({ watched }) => {
   const [isOpen2, setIsOpen2] = useState(true);
-  
+
   return (
     <>
       <div className="box">
@@ -20,7 +20,7 @@ const WatchListBox = ({ watched }) => {
         {isOpen2 && (
           <>
             <WatchedSummery watched={watched} />
-            <WatchedMovies watched={watched} />
+            <WatchedMoviesList watched={watched} />
           </>
         )}
       </div>
