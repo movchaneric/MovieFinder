@@ -24,8 +24,6 @@ const App = () => {
   const [selectMovieId, setSelectMovieId] = useState(null);
   const [userStarRating, setUserStarRating] = useState("");
 
-  console.log("Watched movies list: ", watched);
-
   const handleClickMovie = (id) => {
     setSelectMovieId((prevState) => (prevState !== id ? id : null));
   };
@@ -39,42 +37,53 @@ const App = () => {
   };
 
   const deleteMovieFromWatchedList = (movieId) => {
-    setWatched((watched) => watched.filter((movie) => movie.imdbId !== movieId))
-  }
+    setWatched((watched) =>
+      watched.filter((movie) => movie.imdbId !== movieId)
+    );
+  };
 
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const fetchMovies = async () => {
       try {
         setIsLoading(true);
         setError("");
 
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`
-        );
+        if (query.length === 0 || query.length < 3) {
+          setMovies([]);
+          setError("");
+          return;
+        }
 
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
+          { signal: signal }
+        );
         if (!res.ok)
           throw new Error("Something went wrong with fetching movies");
 
         const data = await res.json();
-
         if (data.Response === "False") throw new Error(data.Error);
 
         setMovies(data.Search);
       } catch (err) {
-        console.error(err);
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (query.length === 0) {
-      setMovies([]);
-      setError("");
-      return;
-    }
     fetchMovies();
+
+    //clean up function
+    return () => {
+      controller.abort();
+    };
   }, [query]);
+
+  
 
   return (
     <>

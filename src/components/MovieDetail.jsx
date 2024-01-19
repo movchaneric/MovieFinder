@@ -32,15 +32,17 @@ const MovieDetail = ({
     onCloseMovie();
   };
 
-  const ratedMovieStars = watched.find((movie) => movie.imdbId === selectMovieId)?.userRating
-  
+  const ratedMovieStars = watched.find(
+    (movie) => movie.imdbId === selectMovieId
+  )?.userRating;
 
   useEffect(() => {
     setIsLoading(true);
     const selectedMovieById = async () => {
-      const res =
-        await fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&i=${selectMovieId}
-            `);
+      const res = await fetch(
+        `http://www.omdbapi.com/?apikey=${API_KEY}&i=${selectMovieId}
+            `
+      );
       const resData = await res.json();
       setMovie(resData);
       setIsLoading(false);
@@ -48,6 +50,35 @@ const MovieDetail = ({
 
     selectedMovieById();
   }, [API_KEY, selectMovieId]);
+
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Escape") {
+        onCloseMovie(); //close movie detail function
+        console.log("Closed.");
+      }
+    });
+
+    return () => {
+      document.removeEventListener("keydown", () => {
+        document.addEventListener("keydown", (event) => {
+          if (event.code === "Escape") {
+            onCloseMovie(); //close movie detail function
+            console.log("Closed.");
+          }
+        });
+      });
+    };
+  }, [onCloseMovie]);
+
+  useEffect(() => {
+    if (!movie.Title) return;
+    document.title = `Movie: ${movie.Title}`;
+
+    return () => {
+      document.title = "🍿Movie Finder";
+    };
+  }, [movie.Title]);
 
   return (
     <>
