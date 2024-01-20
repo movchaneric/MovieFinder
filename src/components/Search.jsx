@@ -1,28 +1,18 @@
 import { useEffect, useRef } from "react";
+import { useKey } from "./useKey";
 
 const Search = ({ query, setQuery }) => {
   const searchRef = useRef(null);
 
-  //Listen to enter keypress event and make focus on the search input
-  useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if (document.activeElement === searchRef.current) return; //To avoid deleting when there is still text inside the input.
-      
-      if (e.key === "Enter") {
-        setQuery("");
-        searchRef.current.focus();
-      }
-    });
+  const searchInputFocus = () => {
+    if (document.activeElement === searchRef.current) return; //input is already in focus
 
-    return () => {
-      document.removeEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          setQuery("");
-          searchRef.current.focus();
-        }
-      });
-    };
-  }, [setQuery]);
+    setQuery("");
+    searchRef.current.focus();
+  };
+
+  //Listen to enter keypress event and make focus on the search input == Custom hook!
+  useKey("Enter", searchInputFocus);
 
   return (
     <input

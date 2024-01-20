@@ -3,6 +3,7 @@ import StarRating from "./StarRating";
 import Loader from "./Loader";
 
 import "../index.css";
+import { useKey } from "./useKey";
 
 const MovieDetail = ({
   selectMovieId,
@@ -50,26 +51,27 @@ const MovieDetail = ({
 
     selectedMovieById();
   }, [API_KEY, selectMovieId]);
+  
+  useKey("Escape", onCloseMovie);
+  // useEffect(() => {
+  //   document.addEventListener("keydown", (event) => {
+  //     if (event.code === "Escape") {
+  //       onCloseMovie(); //close movie detail function
+  //       console.log("Closed.");
+  //     }
+  //   });
 
-  useEffect(() => {
-    document.addEventListener("keydown", (event) => {
-      if (event.code === "Escape") {
-        onCloseMovie(); //close movie detail function
-        console.log("Closed.");
-      }
-    });
-
-    return () => {
-      document.removeEventListener("keydown", () => {
-        document.addEventListener("keydown", (event) => {
-          if (event.code === "Escape") {
-            onCloseMovie(); //close movie detail function
-            console.log("Closed.");
-          }
-        });
-      });
-    };
-  }, [onCloseMovie]);
+  //   return () => {
+  //     document.removeEventListener("keydown", () => {
+  //       document.addEventListener("keydown", (event) => {
+  //         if (event.code === "Escape") {
+  //           onCloseMovie(); //close movie detail function
+  //           console.log("Closed.");
+  //         }
+  //       });
+  //     });
+  //   };
+  // }, [onCloseMovie]);
 
   useEffect(() => {
     if (!movie.Title) return;

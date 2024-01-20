@@ -29,7 +29,6 @@ const App = () => {
   const onCloseMovie = () => {
     setSelectMovieId(null);
   };
-
   //Custom hook!
   const { movies, error, isLoading, API_KEY } = useMovies(query);
 
