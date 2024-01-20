@@ -12,24 +12,29 @@ import WatchedMoviesList from "./components/WatchedMovieList";
 import Loader from "./components/Loader";
 import ErrorMessage from "./components/ErrorMessage";
 import MovieDetail from "./components/MovieDetail";
-
-const API_KEY = "c6e41545";
+//Custom hooks
+import { useMovies } from "./components/useMovies";
+import { useLocalStorageState } from "./components/useLocalStorage";
 
 const App = () => {
-  const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]); //List of all movies in the watched list after star rating them
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  //watched, setWatched] = retured values from the custom hook.
+  //Using custom hook instead of typting the whole login in app.js(more cleaner)
+  const [watched, setWatched] = useLocalStorageState([], "watched");
   const [query, setQuery] = useState("");
   const [selectMovieId, setSelectMovieId] = useState(null);
   const [userStarRating, setUserStarRating] = useState("");
 
-  const handleClickMovie = (id) => {
-    setSelectMovieId((prevState) => (prevState !== id ? id : null));
-  };
-
+  //onCloseMovie function must be declared before passing it into useMovie
+  //otherwise we had to use function named declation so we can type the useMovie first and pass the function name and then declare it.
   const onCloseMovie = () => {
     setSelectMovieId(null);
+  };
+
+  //Custom hook!
+  const { movies, error, isLoading, API_KEY } = useMovies(query);
+
+  const handleClickMovie = (id) => {
+    setSelectMovieId((prevState) => (prevState !== id ? id : null));
   };
 
   const addMovieToWatchedList = (movie) => {
@@ -41,49 +46,6 @@ const App = () => {
       watched.filter((movie) => movie.imdbId !== movieId)
     );
   };
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const fetchMovies = async () => {
-      try {
-        setIsLoading(true);
-        setError("");
-
-        if (query.length === 0 || query.length < 3) {
-          setMovies([]);
-          setError("");
-          return;
-        }
-
-        const res = await fetch(
-          `http://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`,
-          { signal: signal }
-        );
-        if (!res.ok)
-          throw new Error("Something went wrong with fetching movies");
-
-        const data = await res.json();
-        if (data.Response === "False") throw new Error(data.Error);
-
-        setMovies(data.Search);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMovies();
-
-    //clean up function
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
-
-  
 
   return (
     <>
